@@ -110,14 +110,6 @@ int sensors_search_cpu(const sensors_chip_name **ret_name, int *ret_subfeat_nr) 
     return result;
 }
 
-void sigpipe_handler(int signo) {
-    if (signo != SIGPIPE) {
-        syslog(LOG_ERR, "sigpipe_handler called on signal %d", signo);
-        return;
-    }
-    pause();
-}
-
 int main(int argc, char *argv[]) {
     daemonize(argv[0]);
 
@@ -144,7 +136,7 @@ int main(int argc, char *argv[]) {
             syslog(LOG_ERR, "couldn't open fifo at %s", FIFO_PATH);
             exit(EXIT_FAILURE);
         }
-        chmod(FIFO_PATH, S_IWOTH);
+        chmod(FIFO_PATH, S_IWOTH); // :^)
     }
 
     pid_t pid;
@@ -198,8 +190,8 @@ int main(int argc, char *argv[]) {
             syslog(LOG_INFO, "exiting child");
             exit(EXIT_SUCCESS);
         }
-        syslog(LOG_INFO, "waiting for child");
-        wait(NULL);
+//        syslog(LOG_INFO, "waiting for child"); // shouldnt have to :)
+//        wait(NULL);
         syslog(LOG_INFO, "parent end loop");
     }
 

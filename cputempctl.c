@@ -28,7 +28,8 @@ int main(int argc, char *argv[]) {
 
     char temp[BUFSIZ];
 
-    sleep(1); // :(
+//    sleep(1); // :(
+    usleep(1000); // :|
 
     FILE *res_fifo = fopen(res_fifo_path, "r");
     if (res_fifo == NULL) {
@@ -37,6 +38,7 @@ int main(int argc, char *argv[]) {
     }
 
     fgets(temp, BUFSIZ, res_fifo);
+    fclose(res_fifo);
 
     printf("cpu temp: %s", temp);
 
