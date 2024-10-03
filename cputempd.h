@@ -18,8 +18,8 @@
 #define CPU_TEMP_SUBFEAT    SENSORS_SUBFEATURE_TEMP_INPUT
 
 #define FIFO_PATH           "/var/run/cputempd.fifo"
-#define FIFO_CLIENT_PATH    "/tmp/cputempd."
-#define FIFO_CLIENT_PATH_SZ 14
+#define FIFO_CLIENT_DIR     "/tmp/cputempd"
+#define FIFO_CLIENT_PATH    "/tmp/cputempd/cputempd."
 
 #define TEMP_STR_LEN        8
 

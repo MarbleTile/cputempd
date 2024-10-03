@@ -128,11 +128,18 @@ int main(int argc, char *argv[]) {
 
     if (access(FIFO_PATH, R_OK) != 0) {
         syslog(LOG_INFO, "creating %s", FIFO_PATH);
-        if (mkfifo(FIFO_PATH, 0) != 0) {
+        if (mkfifo(FIFO_PATH, S_IWOTH) != 0) {
             syslog(LOG_ERR, "couldn't open fifo at %s", FIFO_PATH);
             exit(EXIT_FAILURE);
         }
-        chmod(FIFO_PATH, S_IWOTH); // :^)
+    }
+
+    if (access(FIFO_CLIENT_DIR, F_OK) != 0) {
+        syslog(LOG_INFO, "creating directory %s", FIFO_CLIENT_DIR);
+        if (mkdir(FIFO_CLIENT_DIR, S_IROTH|S_IXOTH) != 0) {
+            syslog(LOG_ERR, "couldn't create directory %s", FIFO_CLIENT_DIR);
+            exit(EXIT_FAILURE);
+        }
     }
 
     pid_t pid;
@@ -159,9 +166,10 @@ int main(int argc, char *argv[]) {
 
             if (access(client_path, W_OK) != 0) {
                 syslog(LOG_INFO, "creating %s", client_path);
-                mkfifo(client_path, 0);
-                chmod(client_path, S_IROTH);
+                mkfifo(client_path, S_IROTH);
             }
+
+            kill(client_pid, SIGUSR1);
 
             int client_fifo_fd = open(client_path, O_WRONLY);
             char temp_str[TEMP_STR_LEN];
