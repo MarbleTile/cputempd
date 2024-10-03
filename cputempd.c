@@ -88,11 +88,8 @@ int sensors_search_cpu(const sensors_chip_name **ret_name, int *ret_subfeat_nr) 
     char *label;
 
     while (((name = sensors_get_detected_chips(NULL, &n_chip)) != NULL) && do_search) {
-//        syslog(LOG_INFO, "chip:\t%d\t%s\t%s", name->addr, name->path, name->prefix);
         while (((feat = sensors_get_features(name, &n_feat)) != NULL) && do_search) {
-//            syslog(LOG_INFO, "feature:\t%s", feat->name);
             label = sensors_get_label(name, feat);
-//            syslog(LOG_INFO, "label:\t%s", label);
             if (strncmp(label, CPU_SEARCH_0, CPU_SEARCH_LEN_0) == 0 || \
                     strncmp(label, CPU_SEARCH_1, CPU_SEARCH_LEN_1) == 0) {
                 do_search = CPU_SEARCH_STOP;
@@ -100,7 +97,6 @@ int sensors_search_cpu(const sensors_chip_name **ret_name, int *ret_subfeat_nr) 
                 *ret_name = name;
                 *ret_subfeat_nr = subfeat->number;
                 result = CPU_SEARCH_SUCCESS;
-//                syslog(LOG_INFO, "cpu temp subfeature number: %d", subfeat->number);
             }
             free(label);
             n_subfeat = 0;
@@ -150,24 +146,16 @@ int main(int argc, char *argv[]) {
 
     // fifo and loop
     while (1) {
-        syslog(LOG_INFO, "begin loop");
-
         client_pid_len = read(fifo_fd, fifo_pid_in, PIPE_BUF);
         client_pid = (pid_t) atol(fifo_pid_in);
-
-        syslog(LOG_INFO, "recv pid %d", client_pid);
 
         if ((pid = fork()) < 0) {
             syslog(LOG_ERR, "fork error");
             exit(EXIT_FAILURE);
         } else if (pid == 0) { //child
-            syslog(LOG_INFO, "child created");
-
             sensors_get_value(name, subfeat_nr, &temp);
             char client_path[BUFSIZ];
             snprintf(client_path, BUFSIZ, FIFO_CLIENT_PATH"%d", client_pid);
-
-            syslog(LOG_INFO, "child client path: %s", client_path);
 
             if (access(client_path, W_OK) != 0) {
                 syslog(LOG_INFO, "creating %s", client_path);
@@ -190,9 +178,7 @@ int main(int argc, char *argv[]) {
             syslog(LOG_INFO, "exiting child");
             exit(EXIT_SUCCESS);
         }
-//        syslog(LOG_INFO, "waiting for child"); // shouldnt have to :)
-//        wait(NULL);
-        syslog(LOG_INFO, "parent end loop");
+        wait(NULL);
     }
 
     exit(EXIT_SUCCESS);
