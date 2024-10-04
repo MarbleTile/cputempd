@@ -3,6 +3,10 @@
 #define STR(x) #x
 #define ESC "\x1b["
 
+#define ERASE_TO_END    0
+#define ERASE_TO_BEGIN  1
+#define ERASE_ALL       2
+
 #define CURS_UP(n)          ESC STR(n) "A"
 #define CURS_DOWN(n)        ESC STR(n) "B"
 #define CURS_FORWARD(n)     ESC STR(n) "C"
