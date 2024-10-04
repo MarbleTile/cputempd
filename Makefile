@@ -12,7 +12,10 @@ enumerate: enumerate.c
 	${CC} -o $@ $^ ${LINK}
 
 cputempctl: cputempctl.c
-	${CC} -o $@ $^ -g
+	${CC} -o $@ $^ 
+
+test: test.c
+	${CC} -o $@ $^
 
 .PHONY: journal getps clean
 
@@ -23,5 +26,5 @@ getps:
 	ps -efj | head -n 1; ps -efj | grep ${PROG} | grep -v tmux 
 
 clean:
-	rm -f cputempd enumerate cputempctl
+	rm -f cputempd enumerate cputempctl test
 
